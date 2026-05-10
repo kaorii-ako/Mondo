@@ -1,65 +1,93 @@
-import Image from "next/image";
+import Link from 'next/link'
 
-export default function Home() {
+const FEATURES = [
+  { ja: '問題生成', en: 'AI Question Generation',    desc: '5 levels from basic recall to Olympic difficulty' },
+  { ja: '数式入力', en: 'Live Math Editor',           desc: 'MathLive scratchpad with full LaTeX and chemistry symbols' },
+  { ja: 'ヒント',  en: 'Progressive Hints',          desc: 'Up to 3 hints per question — nudges, not answers' },
+  { ja: '全教科',  en: 'Any Subject',                 desc: 'Upload a PDF or paste text — works for any topic' },
+]
+
+const TIERS = [
+  { name: 'Free',  ja: '無料',   topics: '3',  levels: '1–3', hints: '5/day',  model: 'Standard' },
+  { name: 'Plus',  ja: 'プラス', topics: '20', levels: '1–5', hints: '50/day', model: 'Pro' },
+  { name: 'Ultra', ja: '超',     topics: '∞',  levels: '1–5', hints: '∞',       model: 'Pro' },
+]
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen">
+      {/* Nav */}
+      <nav className="flex items-center justify-between px-6 py-4 border-b border-wabi-border">
+        <span className="font-serif text-xl text-wabi-dark tracking-wide">AnyTutor</span>
+        <div className="flex gap-3">
+          <Link href="/auth/login"  className="text-sm text-wabi-muted hover:text-wabi-primary transition-colors">Sign in</Link>
+          <Link href="/auth/signup" className="text-sm bg-wabi-primary text-wabi-bg px-4 py-1.5 rounded hover:bg-wabi-dark transition-colors">Get started</Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </nav>
+
+      {/* Hero */}
+      <section className="max-w-2xl mx-auto text-center px-6 py-24">
+        <p className="text-wabi-muted tracking-widest text-xs uppercase mb-4">個人AI家庭教師</p>
+        <h1 className="font-serif text-5xl text-wabi-dark leading-tight mb-6">
+          Your personal<br />AI tutor
+        </h1>
+        <p className="text-wabi-muted text-lg mb-10">
+          Upload any topic — get 5 levels of practice questions,<br />
+          live math editing, and smart hints.
+        </p>
+        <Link href="/auth/signup"
+          className="inline-block bg-wabi-primary text-wabi-bg px-8 py-3 rounded-lg text-sm hover:bg-wabi-dark transition-colors">
+          Start for free →
+        </Link>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-2xl mx-auto px-6 pb-20 grid grid-cols-2 gap-4">
+        {FEATURES.map(f => (
+          <div key={f.ja} className="bg-wabi-surface border border-wabi-border rounded-lg p-5">
+            <p className="font-serif text-wabi-primary text-xl mb-1">{f.ja}</p>
+            <p className="text-wabi-dark font-medium text-sm">{f.en}</p>
+            <p className="text-wabi-muted text-xs mt-1">{f.desc}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Tier table */}
+      <section className="max-w-xl mx-auto px-6 pb-24">
+        <h2 className="font-serif text-2xl text-center text-wabi-dark mb-8">料金プラン</h2>
+        <div className="border border-wabi-border rounded-lg overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-wabi-border bg-wabi-surface">
+                <th className="text-left px-4 py-3 text-wabi-muted font-normal"></th>
+                {TIERS.map(t => (
+                  <th key={t.name} className="px-4 py-3 text-center text-wabi-dark font-serif">
+                    <div className="text-lg text-wabi-primary">{t.ja}</div>
+                    <div className="text-xs text-wabi-muted font-normal">{t.name}</div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { label: 'Topics',   key: 'topics' },
+                { label: 'Levels',   key: 'levels' },
+                { label: 'Hints',    key: 'hints' },
+                { label: 'AI Model', key: 'model' },
+              ].map(row => (
+                <tr key={row.label} className="border-b border-wabi-border last:border-0">
+                  <td className="px-4 py-3 text-wabi-muted">{row.label}</td>
+                  {TIERS.map(t => (
+                    <td key={t.name} className="px-4 py-3 text-center text-wabi-dark">
+                      {(t as any)[row.key]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </main>
-    </div>
-  );
+      </section>
+    </main>
+  )
 }
