@@ -36,3 +36,9 @@ next-env.d.ts
 # IDE
 .idea/
 *.iml
+
+# Superpowers brainstorm sessions
+.superpowers/
+
+# Build output
+/dist/
