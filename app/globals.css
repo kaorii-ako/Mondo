@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --color-wabi-bg: #f5f0e8;
+  --color-wabi-surface: #ede8df;
+  --color-wabi-border: #c9b99a;
+  --color-wabi-primary: #8b7355;
+  --color-wabi-dark: #3d2e1e;
+  --color-wabi-muted: #7a6a55;
+  --color-wabi-light: #d4c5a9;
+  --font-family-serif: "Noto Serif JP", Georgia, serif;
+  --font-family-sans: Inter, system-ui, sans-serif;
+}
+
+body { font-family: 'Inter', system-ui, sans-serif; }
+h1, h2, h3 { font-family: 'Noto Serif JP', Georgia, serif; }
