@@ -14,6 +14,13 @@ export async function POST(req: NextRequest) {
     hintNumber: 1 | 2 | 3
   }
 
+  if (!question || typeof question !== 'string' || !question.trim()) {
+    return NextResponse.json({ error: 'question required' }, { status: 400 })
+  }
+  if (![1, 2, 3].includes(hintNumber)) {
+    return NextResponse.json({ error: 'hintNumber must be 1, 2, or 3' }, { status: 400 })
+  }
+
   const { hintsPerDay } = getTierLimits(session.user.tier)
   const allowed = await canUseHint(session.user.id, hintsPerDay)
   if (!allowed) {
@@ -32,8 +39,9 @@ export async function POST(req: NextRequest) {
         for await (const chunk of ollamaStream(model, prompt)) {
           controller.enqueue(new TextEncoder().encode(chunk))
         }
-      } finally {
         controller.close()
+      } catch (err) {
+        controller.error(err)
       }
     },
   })

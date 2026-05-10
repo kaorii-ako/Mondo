@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
     studentAnswer: string
   }
 
+  if (!question || !modelAnswer || !studentAnswer) {
+    return NextResponse.json({ error: 'question, modelAnswer, and studentAnswer required' }, { status: 400 })
+  }
+
   const model = getModelForTier(session.user.tier)
   const prompt = buildGradePrompt(question, modelAnswer, studentAnswer)
 
@@ -23,8 +27,9 @@ export async function POST(req: NextRequest) {
         for await (const chunk of ollamaStream(model, prompt)) {
           controller.enqueue(new TextEncoder().encode(chunk))
         }
-      } finally {
         controller.close()
+      } catch (err) {
+        controller.error(err)
       }
     },
   })

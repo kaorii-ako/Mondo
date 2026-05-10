@@ -35,3 +35,13 @@ describe('canUseHint', () => {
     expect(result).toBe(true)
   })
 })
+
+describe('recordHint', () => {
+  it('inserts into hint_events', async () => {
+    const insertMock = vi.fn().mockResolvedValue({ error: null })
+    mockAdmin.from.mockReturnValue({ insert: insertMock })
+    await recordHint('user-1')
+    expect(mockAdmin.from).toHaveBeenCalledWith('hint_events')
+    expect(insertMock).toHaveBeenCalledWith({ user_id: 'user-1' })
+  })
+})

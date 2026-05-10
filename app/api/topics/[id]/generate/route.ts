@@ -68,7 +68,12 @@ export async function GET(
 
   const { id } = await params
 
-  const level = parseInt(req.nextUrl.searchParams.get('level') ?? '0', 10)
+  const rawLevel = req.nextUrl.searchParams.get('level')
+  if (!rawLevel) return NextResponse.json({ error: 'level param required' }, { status: 400 })
+  const level = parseInt(rawLevel, 10)
+  if (isNaN(level) || level < 1 || level > 5) {
+    return NextResponse.json({ error: 'level must be 1-5' }, { status: 400 })
+  }
   const topic = await getOwnedTopic(session.user.id, id)
   if (!topic) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
