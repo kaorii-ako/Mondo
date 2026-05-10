@@ -34,9 +34,10 @@ export async function DELETE(
   const topic = await getOwnedTopic(session.user.id, id)
   if (!topic) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  await supabaseAdmin.from('topics')
+  const { error: deleteError } = await supabaseAdmin.from('topics')
     .update({ deleted_at: new Date().toISOString() })
     .eq('id', id)
+  if (deleteError) return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
 
   return new NextResponse(null, { status: 204 })
 }

@@ -29,4 +29,11 @@ describe('parsePdf', () => {
     const { parsePdf, PdfEmptyError } = await import('../pdf')
     await expect(parsePdf(Buffer.from('fake'))).rejects.toThrow(PdfEmptyError)
   })
+
+  it('throws PdfEncryptedError for encrypted PDFs', async () => {
+    const { default: pdfParse } = await import('pdf-parse')
+    vi.mocked(pdfParse).mockRejectedValueOnce(new Error('password required'))
+    const { parsePdf, PdfEncryptedError } = await import('../pdf')
+    await expect(parsePdf(Buffer.from('fake'))).rejects.toThrow(PdfEncryptedError)
+  })
 })

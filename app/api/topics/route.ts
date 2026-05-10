@@ -25,11 +25,12 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   // Enforce topic count limit
-  const { count } = await supabaseAdmin
+  const { count, error: countError } = await supabaseAdmin
     .from('topics')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', session.user.id)
     .is('deleted_at', null)
+  if (countError) return NextResponse.json({ error: 'Failed to check topic count' }, { status: 500 })
 
   if (isTopicLimitReached(session.user.tier, count ?? 0)) {
     return NextResponse.json(
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
   }
 
   const contentType = req.headers.get('content-type') ?? ''
-  let name: string
+  let name: string | undefined
   let content_text: string | null = null
   let pdf_url: string | null = null
   let truncated = false
@@ -54,11 +55,11 @@ export async function POST(req: NextRequest) {
       if (file.size > 10 * 1024 * 1024) {
         return NextResponse.json({ error: 'PDF too large (max 10 MB)' }, { status: 422 })
       }
-      if (file.type !== 'application/pdf') {
-        return NextResponse.json({ error: 'Only PDF files accepted' }, { status: 422 })
-      }
 
       const buffer = Buffer.from(await file.arrayBuffer())
+      if (buffer.length < 4 || !buffer.slice(0, 4).equals(Buffer.from('%PDF'))) {
+        return NextResponse.json({ error: 'Only PDF files accepted' }, { status: 422 })
+      }
       try {
         const parsed = await parsePdf(buffer)
         content_text = parsed.text
@@ -70,7 +71,8 @@ export async function POST(req: NextRequest) {
         throw e
       }
 
-      const path = `${session.user.id}/${Date.now()}-${file.name}`
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100)
+      const path = `${session.user.id}/${Date.now()}-${safeName}`
       const { data: upload, error: uploadErr } = await supabaseAdmin.storage
         .from('pdfs').upload(path, buffer, { contentType: 'application/pdf' })
       if (uploadErr) return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
@@ -80,16 +82,16 @@ export async function POST(req: NextRequest) {
     }
   } else {
     const body = await req.json()
-    name = body.name
-    content_text = body.text ?? null
+    name = typeof body.name === 'string' ? body.name.slice(0, 200) : undefined
+    content_text = typeof body.text === 'string' ? body.text.slice(0, 15_000) : null
   }
 
-  if (!name!) return NextResponse.json({ error: 'name required' }, { status: 400 })
+  if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 })
   if (!content_text) return NextResponse.json({ error: 'content required' }, { status: 400 })
 
   const { data, error } = await supabaseAdmin
     .from('topics')
-    .insert({ user_id: session.user.id, name: name!, content_text, pdf_url })
+    .insert({ user_id: session.user.id, name: name, content_text, pdf_url })
     .select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
