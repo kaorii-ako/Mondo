@@ -14,11 +14,19 @@ export default function DashboardPage() {
   const [toast, setToast] = useState<{ message: string; type: 'error' | 'success' } | null>(null)
 
   useEffect(() => {
-    fetch('/api/topics').then(r => r.json()).then(setTopics).finally(() => setLoading(false))
+    fetch('/api/topics')
+      .then(r => { if (!r.ok) throw new Error('Failed'); return r.json() })
+      .then(setTopics)
+      .catch(() => setToast({ message: 'Failed to load topics', type: 'error' }))
+      .finally(() => setLoading(false))
   }, [])
 
   async function handleDelete(id: string) {
-    await fetch(`/api/topics/${id}`, { method: 'DELETE' })
+    const res = await fetch(`/api/topics/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      setToast({ message: 'Failed to delete topic', type: 'error' })
+      return
+    }
     setTopics(t => t.filter(x => x.id !== id))
     setToast({ message: 'Topic deleted', type: 'success' })
   }

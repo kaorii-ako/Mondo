@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import { LEVEL_LABELS, type Level, type Topic } from '@/types'
@@ -16,10 +16,20 @@ export default function TopicDetailPage() {
   const [topic, setTopic] = useState<Topic | null>(null)
   const [generating, setGenerating] = useState<Level | null>(null)
   const [error, setError] = useState('')
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
-    fetch(`/api/topics/${params.id}`).then(r => r.json()).then(setTopic)
+    fetch(`/api/topics/${params.id}`)
+      .then(r => { if (!r.ok) throw new Error('Not found'); return r.json() })
+      .then(setTopic)
+      .catch(() => setError('Failed to load topic'))
   }, [params.id])
+
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [])
 
   const maxLevel = TIER_MAX[session?.user.tier ?? 'free']
 
@@ -36,11 +46,20 @@ export default function TopicDetailPage() {
     if (!res.ok) { setError(data.error); setGenerating(null); return }
     if (data.status === 'done') { router.push(`/topics/${params.id}/${level}`); return }
 
-    const poll = setInterval(async () => {
+    pollRef.current = setInterval(async () => {
       const r = await fetch(`/api/topics/${params.id}/generate?level=${level}`)
       const d = await r.json()
-      if (d.status === 'done') { clearInterval(poll); router.push(`/topics/${params.id}/${level}`) }
-      if (d.status === 'error') { clearInterval(poll); setError(d.error ?? 'Generation failed'); setGenerating(null) }
+      if (d.status === 'done') {
+        clearInterval(pollRef.current!)
+        pollRef.current = null
+        router.push(`/topics/${params.id}/${level}`)
+      }
+      if (d.status === 'error') {
+        clearInterval(pollRef.current!)
+        pollRef.current = null
+        setError(d.error ?? 'Generation failed')
+        setGenerating(null)
+      }
     }, 2000)
   }
 

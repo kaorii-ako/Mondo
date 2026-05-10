@@ -20,6 +20,12 @@ export function TopicForm() {
     setLoading(true)
 
     try {
+      if (tab === 'pdf' && !file) {
+        setError('Please select a PDF file')
+        setLoading(false)
+        return
+      }
+
       let res: Response
       if (tab === 'pdf' && file) {
         const fd = new FormData()
