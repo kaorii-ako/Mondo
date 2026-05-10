@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import 'katex/dist/katex.min.css';
 
 @theme {
   --color-wabi-bg: #f5f0e8;
