@@ -43,4 +43,16 @@ describe('getModelForTier', () => {
     expect(getModelForTier('plus')).toBe('qwen3.6:27b')
     expect(getModelForTier('ultra')).toBe('qwen3.6:27b')
   })
+  it('free uses default model when env unset', () => {
+    const prev = process.env.OLLAMA_MODEL_FREE
+    delete process.env.OLLAMA_MODEL_FREE
+    expect(getModelForTier('free')).toBe('qwen3.5:9b')
+    if (prev !== undefined) process.env.OLLAMA_MODEL_FREE = prev
+  })
+  it('plus uses pro model', () => {
+    const prev = process.env.OLLAMA_MODEL_PRO
+    delete process.env.OLLAMA_MODEL_PRO
+    expect(getModelForTier('plus')).toBe('qwen3.6:27b')
+    if (prev !== undefined) process.env.OLLAMA_MODEL_PRO = prev
+  })
 })

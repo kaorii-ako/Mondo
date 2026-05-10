@@ -2,6 +2,7 @@
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -21,7 +22,7 @@ export default function SignupPage() {
       redirect: false,
     })
     setLoading(false)
-    if (res?.error) { setError(res.error); return }
+    if (res?.error) { setError('Could not create account. Try a different email or password.'); return }
     router.push('/dashboard')
   }
 
@@ -45,7 +46,7 @@ export default function SignupPage() {
           </button>
         </form>
         <p className="text-center text-wabi-muted text-sm mt-4">
-          Have an account? <a href="/auth/login" className="text-wabi-primary underline">Sign in</a>
+          Have an account? <Link href="/auth/login" className="text-wabi-primary underline">Sign in</Link>
         </p>
       </div>
     </main>

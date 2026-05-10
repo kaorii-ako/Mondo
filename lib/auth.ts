@@ -16,6 +16,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
+        if (credentials.mode !== 'login' && credentials.mode !== 'signup') return null
 
         if (credentials.mode === 'signup') {
           const { data: existing } = await supabaseAdmin
@@ -55,14 +56,16 @@ export const authOptions: NextAuthOptions = {
           { email: user.email!, name: user.name ?? null },
           { onConflict: 'email', ignoreDuplicates: false }
         )
-        const { data } = await supabaseAdmin
-          .from('users').select('id, tier').eq('email', user.email!).single()
-        if (data) { user.id = data.id; (user as any).tier = data.tier }
       }
       return true
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) { token.id = user.id; token.tier = (user as any).tier ?? 'free' }
+      if (account?.provider === 'google' && token.email && !token.tier) {
+        const { data } = await supabaseAdmin
+          .from('users').select('id, tier').eq('email', token.email).single()
+        if (data) { token.id = data.id; token.tier = data.tier }
+      }
       return token
     },
     async session({ session, token }) {

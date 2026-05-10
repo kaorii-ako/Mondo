@@ -2,6 +2,7 @@
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -41,7 +42,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="text-center text-wabi-muted text-sm mt-4">
-          No account? <a href="/auth/signup" className="text-wabi-primary underline">Sign up</a>
+          No account? <Link href="/auth/signup" className="text-wabi-primary underline">Sign up</Link>
         </p>
       </div>
     </main>
