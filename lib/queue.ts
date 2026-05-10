@@ -22,3 +22,8 @@ export async function enqueueGeneration(data: GenerationJobData): Promise<string
   })
   return job.id
 }
+
+process.on('SIGTERM', async () => {
+  await questionQueue.close()
+  redisConnection.quit()
+})

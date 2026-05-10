@@ -56,3 +56,9 @@ worker.on('failed', async (job, err) => {
 })
 
 console.log(`Question generation worker started (concurrency=${concurrency})`)
+
+process.on('SIGTERM', async () => {
+  await worker.close()
+  connection.quit()
+  process.exit(0)
+})

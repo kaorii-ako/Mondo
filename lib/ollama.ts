@@ -37,13 +37,14 @@ Never reveal the full model answer. feedback should guide the student.`,
 }
 
 export function buildHintPrompt(question: string, hintNumber: number): Prompt {
+  const clamped = Math.max(1, Math.min(3, hintNumber))
   const depth = [
     'a very gentle nudge pointing to the right approach (do NOT reveal the answer)',
     'a more specific hint about the method to use (do NOT give the answer)',
     'a near-answer hint — describe what the answer looks like without stating it',
-  ][hintNumber - 1]
+  ][clamped - 1]
   return {
-    system: `You are a tutor giving hint ${hintNumber}/3. Give ${depth}. Be concise (2-3 sentences max).`,
+    system: `You are a tutor giving hint ${clamped}/3. Give ${depth}. Be concise (2-3 sentences max).`,
     user: `Question: ${question}`,
   }
 }
@@ -68,7 +69,9 @@ export async function ollamaGenerate(
   })
   if (!res.ok) throw new Error(`Ollama error: ${res.status}`)
   const data = await res.json()
-  return data.message?.content ?? ''
+  const content = data.message?.content
+  if (!content) throw new Error('Ollama returned empty response')
+  return content
 }
 
 export async function* ollamaStream(
@@ -93,15 +96,26 @@ export async function* ollamaStream(
 
   const reader = res.body!.getReader()
   const dec = new TextDecoder()
+  let buf = ''
   while (true) {
     const { done, value } = await reader.read()
     if (done) break
-    const lines = dec.decode(value).split('\n').filter(Boolean)
+    buf += dec.decode(value, { stream: true })
+    const lines = buf.split('\n')
+    buf = lines.pop() ?? ''   // keep incomplete last line for next iteration
     for (const line of lines) {
+      if (!line.trim()) continue
       try {
         const obj = JSON.parse(line)
         if (obj.message?.content) yield obj.message.content
       } catch {}
     }
+  }
+  // flush any remaining content
+  if (buf.trim()) {
+    try {
+      const obj = JSON.parse(buf)
+      if (obj.message?.content) yield obj.message.content
+    } catch {}
   }
 }
