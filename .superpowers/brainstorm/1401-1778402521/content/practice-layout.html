@@ -1,0 +1,106 @@
+<h2>Practice Screen Layout</h2>
+<p class="subtitle">How the main question/answer screen is arranged. Pick what feels right.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="centered" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f0e8;padding:12px;font-family:'Georgia',serif;min-height:200px;">
+      <!-- Top bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #c9b99a;padding-bottom:6px;margin-bottom:10px;">
+        <span style="color:#8b7355;font-size:9px;letter-spacing:2px;">二次方程式 › LV.2 易</span>
+        <span style="color:#c9b99a;font-size:9px;">3 / 5</span>
+      </div>
+      <!-- Progress dots -->
+      <div style="display:flex;gap:4px;justify-content:center;margin-bottom:10px;">
+        <div style="width:8px;height:8px;background:#8b7355;border-radius:50%;"></div>
+        <div style="width:8px;height:8px;background:#8b7355;border-radius:50%;"></div>
+        <div style="width:8px;height:8px;background:#d4c5a9;border-radius:50%;border:1px solid #8b7355;"></div>
+        <div style="width:8px;height:8px;background:#e8e0d0;border-radius:50%;"></div>
+        <div style="width:8px;height:8px;background:#e8e0d0;border-radius:50%;"></div>
+      </div>
+      <!-- Question card centered -->
+      <div style="background:#ede8df;border-radius:6px;padding:12px;margin-bottom:8px;text-align:center;">
+        <div style="color:#8b7355;font-size:8px;letter-spacing:3px;margin-bottom:6px;">QUESTION</div>
+        <div style="color:#3d2e1e;font-size:12px;line-height:1.5;">Solve: x² + 5x + 6 = 0</div>
+      </div>
+      <!-- Answer input -->
+      <div style="background:#fff8f0;border:1px solid #c9b99a;border-radius:4px;padding:8px;margin-bottom:6px;color:#aaa;font-size:10px;">Your answer...</div>
+      <!-- Buttons row -->
+      <div style="display:flex;gap:6px;">
+        <div style="flex:1;background:#8b7355;border-radius:3px;padding:6px;text-align:center;color:#f5f0e8;font-size:9px;">Submit</div>
+        <div style="background:#ede8df;border-radius:3px;padding:6px;text-align:center;color:#8b7355;font-size:9px;border:1px solid #c9b99a;">💡 Hint</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Centered Focus</h3>
+      <p>Single column, centered. Question front and center. Progress dots up top. Clean, distraction-free.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="split" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f0e8;padding:12px;font-family:'Georgia',serif;min-height:200px;">
+      <!-- Top bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #c9b99a;padding-bottom:6px;margin-bottom:8px;">
+        <span style="color:#8b7355;font-size:9px;letter-spacing:2px;">二次方程式 › LV.2 易</span>
+        <span style="color:#c9b99a;font-size:9px;">3 / 5</span>
+      </div>
+      <!-- Split: left=question, right=answer+hint -->
+      <div style="display:flex;gap:8px;height:160px;">
+        <!-- Left panel -->
+        <div style="flex:1;background:#ede8df;border-radius:6px;padding:10px;">
+          <div style="color:#8b7355;font-size:8px;letter-spacing:2px;margin-bottom:6px;">QUESTION</div>
+          <div style="color:#3d2e1e;font-size:11px;line-height:1.5;margin-bottom:8px;">Solve: x² + 5x + 6 = 0</div>
+          <!-- Progress -->
+          <div style="display:flex;gap:3px;margin-top:auto;">
+            <div style="width:6px;height:6px;background:#8b7355;border-radius:50%;"></div>
+            <div style="width:6px;height:6px;background:#8b7355;border-radius:50%;"></div>
+            <div style="width:6px;height:6px;background:#d4c5a9;border-radius:50%;border:1px solid #8b7355;"></div>
+            <div style="width:6px;height:6px;background:#e8e0d0;border-radius:50%;"></div>
+            <div style="width:6px;height:6px;background:#e8e0d0;border-radius:50%;"></div>
+          </div>
+        </div>
+        <!-- Right panel -->
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+          <div style="background:#fff8f0;border:1px solid #c9b99a;border-radius:4px;padding:8px;color:#aaa;font-size:10px;flex:1;">Your answer...</div>
+          <div style="background:#8b7355;border-radius:3px;padding:6px;text-align:center;color:#f5f0e8;font-size:9px;">Submit</div>
+          <div style="background:#ede8df;border-radius:4px;padding:8px;border:1px dashed #c9b99a;">
+            <div style="color:#8b7355;font-size:8px;letter-spacing:2px;margin-bottom:3px;">💡 HINT</div>
+            <div style="color:#7a6a55;font-size:9px;font-style:italic;">Click to reveal hint...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Split Panel</h3>
+      <p>Left: question + context. Right: answer input + hint box always visible. More screen real estate, good for long questions.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="scroll" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f0e8;padding:12px;font-family:'Georgia',serif;min-height:200px;">
+      <!-- Level ribbon -->
+      <div style="background:#8b7355;margin:-12px -12px 10px -12px;padding:6px 12px;display:flex;justify-content:space-between;">
+        <span style="color:#f5f0e8;font-size:9px;letter-spacing:3px;">易 LEVEL 2</span>
+        <span style="color:#d4c5a9;font-size:9px;">Q3 of 5</span>
+      </div>
+      <!-- Topic crumb -->
+      <div style="color:#8b7355;font-size:8px;letter-spacing:2px;margin-bottom:8px;">二次方程式</div>
+      <!-- Question block -->
+      <div style="border-left:3px solid #8b7355;padding-left:10px;margin-bottom:10px;">
+        <div style="color:#3d2e1e;font-size:12px;line-height:1.6;">Solve: x² + 5x + 6 = 0</div>
+      </div>
+      <!-- Answer -->
+      <div style="background:#fff8f0;border:1px solid #c9b99a;border-radius:4px;padding:8px;margin-bottom:6px;color:#aaa;font-size:10px;">Your answer...</div>
+      <!-- Bottom bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#c9b99a;font-size:9px;text-decoration:underline;cursor:pointer;">💡 Need a hint?</span>
+        <div style="background:#8b7355;border-radius:3px;padding:5px 12px;color:#f5f0e8;font-size:9px;">Submit →</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Editorial</h3>
+      <p>Left-border accent on question (like a journal/newspaper pull quote). Vertical flow, hint as subtle link. Most Japanese-editorial feel.</p>
+    </div>
+  </div>
+
+</div>
